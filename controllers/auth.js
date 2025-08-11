@@ -28,7 +28,7 @@ router.post('/sign-up', async (req, res) => {
 
     const token = jwt.sign(payload, process.env.JWT_SECRET);
 
-    res.status(201).json({ token });
+    res.status(201).json({ newUser, token });
   } catch (err) {
     res.status(400).json({ err: 'Invalid, Please try again.' });
   }

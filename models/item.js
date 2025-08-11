@@ -8,7 +8,7 @@ const reviewSchema = new mongoose.Schema({
     required: true 
   },
   rating: { 
-    tupe: Number, 
+    type: Number, 
     enum: [1, 2, 3, 4, 5], 
     required: true, 
   },
@@ -35,6 +35,9 @@ const itemSchema = new mongoose.Schema({
     enum: ['smartphones', 'laptops', 'clothing', 'furniture', 'kitchen', 'stationery', 'fitness'], 
     required: true, 
   },
+  
+  owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  store: {type: mongoose.Schema.Types.ObjectId, ref: 'Store'},
 
   review: [reviewSchema],
 
