@@ -11,10 +11,8 @@ const logger = require('morgan');
 const authRouter = require('./controllers/auth');
 const userRouter = require('./controllers/users');
 const storesRouter = require('./controllers/stores');
+const itemsRouter = require('./controllers/items')
 
-
-// // Middleware
-// const verifyToken = require('./middleware/verify-token');
 
 
 // DB Connection
@@ -34,9 +32,9 @@ app.use(logger('dev'));
 // PUBLIC ROUTES
 app.use('/auth', authRouter);
 app.use('/stores', storesRouter);
+app.use('/items', itemsRouter)
 
 // PROTECTED ROUTES
-// app.use(verifyToken);
 app.use('/users', userRouter);
 
 

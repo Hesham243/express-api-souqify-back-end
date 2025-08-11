@@ -35,6 +35,9 @@ const itemSchema = new mongoose.Schema({
     enum: ['smartphones', 'laptops', 'clothing', 'furniture', 'kitchen', 'stationery', 'fitness'], 
     required: true, 
   },
+  
+  owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  store: {type: mongoose.Schema.Types.ObjectId, ref: 'Store'},
 
   review: [reviewSchema],
 

@@ -16,7 +16,6 @@ const storeSchema = new mongoose.Schema({
   },
 
   owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  products: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Item' }],
 
 }, { timestamps: true })
 
