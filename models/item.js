@@ -8,7 +8,7 @@ const reviewSchema = new mongoose.Schema({
     required: true 
   },
   rating: { 
-    tupe: Number, 
+    type: Number, 
     enum: [1, 2, 3, 4, 5], 
     required: true, 
   },

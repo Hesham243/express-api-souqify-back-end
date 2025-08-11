@@ -8,9 +8,9 @@ const logger = require('morgan');
 
 
 // Controllers
-const testJwtRouter = require('./controllers/test-jwt');
-const authRouter = require('./controllers/auth');
-const userRouter = require('./controllers/users');
+const authRouter = require('./controllers/auth')
+const userRouter = require('./controllers/users')
+const itemRouter = require('./controllers/items')
 
 
 // Middleware
@@ -32,12 +32,13 @@ app.use(logger('dev'));
 
 
 // PUBLIC ROUTES
-app.use('/auth', authRouter);
+app.use('/auth', authRouter)
+app.use('/items', itemRouter)
 
 
 // PROTECTED ROUTES
-app.use(verifyToken);
 app.use('/users', userRouter);
+
 
 
 app.listen(3000, () => {
