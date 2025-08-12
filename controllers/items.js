@@ -86,7 +86,8 @@ router.delete('/:itemId', async(req, res) => {
 
     const item = store.items.id(req.params.itemId)
     if (!item) return res.status(404).json({ message: 'Item not found' })
-    item.remove()
+    
+    item.deleteOne()
     await store.save()
     res.status(200).json(item)
 
