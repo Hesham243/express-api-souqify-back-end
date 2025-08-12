@@ -27,10 +27,8 @@ router.get('/:storeId', async (req, res) => {
 })
 // ========= Protected Routes =========
 
-router.use(verifyToken)
-
 //  CEATE NEW STORE 
-router.post('/', async (req, res) => {
+router.post('/', verifyToken, async (req, res) => {
     try {
         req.body.owner = req.user._id
         const store = await Store.create(req.body)
@@ -42,7 +40,7 @@ router.post('/', async (req, res) => {
 })
 
 //UPDATE A SINGLE STORE
-router.put('/:storeId', async (req, res) => {
+router.put('/:storeId', verifyToken, async (req, res) => {
     try {
         const store = await Store.findById(req.params.storeId)
         if(!store.owner.equals(req.user._id)) {
@@ -61,7 +59,7 @@ router.put('/:storeId', async (req, res) => {
 })
 
 //DELETE A STORE
-router.delete('/:storeId', async (req, res) => {
+router.delete('/:storeId', verifyToken, async (req, res) => {
     try {
         const store = await Store.findById(req.params.storeId)
         if(!store.owner.equals(req.user._id)) {

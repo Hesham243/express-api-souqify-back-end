@@ -1,9 +1,9 @@
 const express = require('express')
-const router = express.Router({ mergeParams:true });
+const router = express.Router({ mergeParams: true });
 const verifyToken = require('../middleware/verify-token.js')
 const Store = require('../models/store.js');
 
-// ========== Public Routes ===========
+// ========== Public Routes (No Authentication) ===========
 
 // Get all items of a specific store
 router.get('/', async(req, res) => {
@@ -11,8 +11,7 @@ router.get('/', async(req, res) => {
     const store = await Store.findById(req.params.storeId)
     if (!store) return res.status(404).json({message: 'Store not found'})
     res.status(200).json(store.items)
-
-  }catch (error){
+  } catch (error){
     res.status(500).json(error)
   }
 })
@@ -27,7 +26,6 @@ router.get('/:itemId', async(req, res) => {
     if(!item) return res.status(404).json({message: 'Item not found'})
     
     res.status(200).json(item)
-
   } catch (error){
     res.status(500).json(error)
   }
@@ -35,10 +33,9 @@ router.get('/:itemId', async(req, res) => {
 
 
 // ========= Protected Routes =========
-router.use(verifyToken)
 
 // Create new item for specific store
-router.post('/', async(req, res) => {
+router.post('/', verifyToken, async(req, res) => {
   try {
     console.log(req.params)
     const store = await Store.findById(req.params.storeId)
@@ -59,7 +56,7 @@ router.post('/', async(req, res) => {
 })
 
 // Update an item from specific store
-router.put('/:itemId', async(req, res) => {
+router.put('/:itemId', verifyToken, async(req, res) => {
   try {
     const store = await Store.findById(req.params.storeId)
     if(!store) return res.status(404).json({message: 'Store not found'})
@@ -78,7 +75,7 @@ router.put('/:itemId', async(req, res) => {
 })
 
 // Delete an item from specific store
-router.delete('/:itemId', async(req, res) => {
+router.delete('/:itemId', verifyToken, async(req, res) => {
   try {
     const store = await Store.findById(req.params.storeId)
     if (!store) return res.status(404).json({ message: 'Store not found' })
@@ -98,17 +95,22 @@ router.delete('/:itemId', async(req, res) => {
 
 
 // CREATE A REVIEW
+
 router.post('/:itemId/reviews', async (req, res) => {
     try {
         const store = await Store.findById(req.params.storeId)
         if (!store) return res.status(404).json({ message: 'Store not found' })
+      
         const item = store.items.id(req.params.itemId)
         if (!item) return res.status(404).json({ message: 'Item not found' })
+      
         req.body.author = req.user._id
         item.reviews.push(req.body)
         await store.save() 
+
         const newReview = item.reviews[item.reviews.length - 1]
         res.status(201).json(newReview)
+      
     } catch (err) {
         res.status(500).json(err)
     }
