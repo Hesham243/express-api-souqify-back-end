@@ -36,7 +36,7 @@ const itemSchema = new mongoose.Schema({
     required: true, 
   },
   
-  review: [reviewSchema],
+  reviews: [reviewSchema],
 
 }, { timestamps: true })
 
