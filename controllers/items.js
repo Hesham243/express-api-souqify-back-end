@@ -95,24 +95,26 @@ router.delete('/:itemId', verifyToken, async(req, res) => {
 
 
 // CREATE A REVIEW
-router.post('/:itemId/reviews', verifyToken, async (req, res) => {
+
+router.post('/:itemId/reviews', async (req, res) => {
     try {
         const store = await Store.findById(req.params.storeId)
         if (!store) return res.status(404).json({ message: 'Store not found' })
-
+      
         const item = store.items.id(req.params.itemId)
         if (!item) return res.status(404).json({ message: 'Item not found' })
-        
+      
         req.body.author = req.user._id
-        item.review.push(req.body)
-
-        await store.save()
+        item.reviews.push(req.body)
+        await store.save() 
 
         const newReview = item.reviews[item.reviews.length - 1]
         res.status(201).json(newReview)
+      
     } catch (err) {
         res.status(500).json(err)
     }
 })
+
 
 module.exports = router;
