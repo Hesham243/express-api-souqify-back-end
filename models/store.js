@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-
+const { itemSchema } = require('./item')
 
 const storeSchema = new mongoose.Schema({
   name: { 
@@ -14,9 +14,8 @@ const storeSchema = new mongoose.Schema({
     enum: ['electronics', 'toys', 'books', 'sports', 'fashion', 'health_beauty'], 
     required: true 
   },
-
   owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-
+  items: [itemSchema],
 }, { timestamps: true })
 
 
