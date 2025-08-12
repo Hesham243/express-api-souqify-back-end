@@ -36,9 +36,6 @@ const itemSchema = new mongoose.Schema({
     required: true, 
   },
   
-  owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  store: {type: mongoose.Schema.Types.ObjectId, ref: 'Store'},
-
   review: [reviewSchema],
 
 }, { timestamps: true })
@@ -46,4 +43,5 @@ const itemSchema = new mongoose.Schema({
 
 
 const Item = mongoose.model('Item', itemSchema)
-module.exports = Item
+
+module.exports = { Item, itemSchema, reviewSchema }

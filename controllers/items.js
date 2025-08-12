@@ -1,34 +1,37 @@
 const express = require('express')
-const router = express.Router();
+const router = express.Router({ mergeParams:true });
 const verifyToken = require('../middleware/verify-token.js')
-const Item = require('../models/item.js');
-const { route } = require('./stores.js');
+const Store = require('../models/store.js');
 
 // ========== Public Routes ===========
 
 // Get all items of a specific store
 router.get('/', async(req, res) => {
   try {
-    const items = await Item.find({store: req.params.storeId}).populate('owner').populate('store')
-    res.status(200).json(items)
+    const store = await Store.findById(req.params.storeId)
+    if (!store) return res.status(404).json({message: 'Store not found'})
+    res.status(200).json(store.items)
 
   }catch (error){
-    res.status(401).json(error)
+    res.status(500).json(error)
   }
 })
 
 // Get one item
 router.get('/:itemId', async(req, res) => {
   try {
-    const item = await Item.findById(req.params.itemId).populate('owner').populate('store')
+    const store = await Store.findById(req.params.storeId)
+    if(!store) return res.status(404).json({message: 'Store not found'})
+
+    const item = store.items.id(req.params.itemId)
+    if(!item) return res.status(404).json({message: 'Item not found'})
+    
     res.status(200).json(item)
 
   } catch (error){
-    res.status(401).json(error)
+    res.status(500).json(error)
   }
 })
-
-
 
 
 // ========= Protected Routes =========
@@ -37,46 +40,59 @@ router.use(verifyToken)
 // Create new item for specific store
 router.post('/', async(req, res) => {
   try {
-    req.body.owner = req.user._id
-    req.body.store = req.params.storeId
-    
-    const item = await Item.create(req.body)
-    item._doc.owner = req.user
-    res.status(201).json(item)
+    console.log(req.params)
+    const store = await Store.findById(req.params.storeId)
+    if(!store) return res.status(404).json({message: 'Store not found'})
+    if (!store.owner.equals(req.user._id)) {
+      return res.status(403).send("You're not allowed to add items to this store")
+    }
+
+    store.items.push(req.body)
+    await store.save()
+
+    const newItem = store.items[store.items.length - 1]
+    res.status(201).json(newItem)
 
   }catch (error) {
-    res.status(401).json(error)
+    res.status(500).json(error)
   }
 })
 
 // Update an item from specific store
 router.put('/:itemId', async(req, res) => {
   try {
-    const item = await Item.findById(req.params.itemId)
-    if (!item.owner.equals(req.user._id)) {
-      return res.status(403).send("You're not allowed to do that")
-    }
-    const updatedItem = await Item.findByIdAndUpdate(req.params.itemId, req.body, { new: true })
-    updatedItem._doc.owner = req.user
-    res.status(200).json(updatedItem)
+    const store = await Store.findById(req.params.storeId)
+    if(!store) return res.status(404).json({message: 'Store not found'})
+    if (!store.owner.equals(req.user._id)) return res.status(403).send("You're not allowed to do that")
+
+    const item = store.items.id(req.params.itemId)
+    if (!item) return res.status(404).json({ message: 'Item not found' })
+
+    Object.assign(item, req.body)
+    await store.save()
+    res.status(200).json(item)
 
   }catch (error) {
-    res.status(401).json(error)
+    res.status(500).json(error)
   }
 })
 
 // Delete an item from specific store
 router.delete('/:itemId', async(req, res) => {
   try {
-    const item = await Item.findById(req.params.itemId)
-    if (!item.owner.equals(req.user._id)) {
-      return res.status(403).send("You're not allowed to do that")
-    }
-    const deletedItem = await Item.findByIdAndDelete(req.params.itemId)
-    res.status(200).json(deletedItem)
+    const store = await Store.findById(req.params.storeId)
+    if (!store) return res.status(404).json({ message: 'Store not found' })
+    if (!store.owner.equals(req.user._id))  return res.status(403).send("You're not allowed to do that")
+
+    const item = store.items.id(req.params.itemId)
+    if (!item) return res.status(404).json({ message: 'Item not found' })
+    
+    item.deleteOne()
+    await store.save()
+    res.status(200).json(item)
 
   } catch (error) {
-    res.status(401).json(error)
+    res.status(500).json(error)
   }
 })
 
