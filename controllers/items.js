@@ -7,7 +7,7 @@ const { route } = require('./stores.js');
 // ========== Public Routes ===========
 
 // Get all items of a specific store
-router.get('/:storeId', async(req, res) => {
+router.get('/', async(req, res) => {
   try {
     const items = await Item.find({store: req.params.storeId}).populate('owner').populate('store')
     res.status(200).json(items)
@@ -18,7 +18,7 @@ router.get('/:storeId', async(req, res) => {
 })
 
 // Get one item
-router.get('/:storeId/:itemId', async(req, res) => {
+router.get('/:itemId', async(req, res) => {
   try {
     const item = await Item.findById(req.params.itemId).populate('owner').populate('store')
     res.status(200).json(item)
@@ -35,7 +35,7 @@ router.get('/:storeId/:itemId', async(req, res) => {
 router.use(verifyToken)
 
 // Create new item for specific store
-router.post('/:storeId', async(req, res) => {
+router.post('/', async(req, res) => {
   try {
     req.body.owner = req.user._id
     req.body.store = req.params.storeId
@@ -50,7 +50,7 @@ router.post('/:storeId', async(req, res) => {
 })
 
 // Update an item from specific store
-router.put('/:storeId/:itemId', async(req, res) => {
+router.put('/:itemId', async(req, res) => {
   try {
     const item = await Item.findById(req.params.itemId)
     if (!item.owner.equals(req.user._id)) {
@@ -66,7 +66,7 @@ router.put('/:storeId/:itemId', async(req, res) => {
 })
 
 // Delete an item from specific store
-router.delete('/:storeId/:itemId', async(req, res) => {
+router.delete('/:itemId', async(req, res) => {
   try {
     const item = await Item.findById(req.params.itemId)
     if (!item.owner.equals(req.user._id)) {

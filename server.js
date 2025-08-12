@@ -32,7 +32,7 @@ app.use(logger('dev'));
 // PUBLIC ROUTES
 app.use('/auth', authRouter);
 app.use('/stores', storesRouter);
-app.use('/items', itemsRouter)
+app.use('/stores/:storeId/items', itemsRouter)
 
 // PROTECTED ROUTES
 app.use('/users', userRouter);
