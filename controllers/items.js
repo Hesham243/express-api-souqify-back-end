@@ -81,4 +81,23 @@ router.delete('/:itemId', async(req, res) => {
 })
 
 
+// CREATE A REVIEW
+router.post('/:itemId', async (req, res) => {
+    try {
+        req.body.author = req.user._id
+        const item = await Item.findById(req.params.itemId)
+        item.review.push(req.body)
+
+        await item.save()
+
+        const newReview = item.review[item.review.length - 1]
+
+        newReview._doc.author = req.user
+
+        res.status(201).json(newReview)
+    } catch (err) {
+        res.status(500).json(err)
+    }
+})
+
 module.exports = router;
