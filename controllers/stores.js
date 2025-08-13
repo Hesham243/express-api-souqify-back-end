@@ -18,7 +18,7 @@ router.get('/', async (req, res) => {
 // GET ONE STORE
 router.get('/:storeId', async (req, res) => {
     try {
-        const store = await Store.findById(req.params.storeId)
+        const store = await Store.findById(req.params.storeId).populate('owner')
         res.status(200).json(store)
     } catch (err) {
         res.status(500).json(err)
