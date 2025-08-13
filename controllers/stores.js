@@ -8,7 +8,7 @@ const router = express.Router()
 // GET ALL THE STORES
 router.get('/', async (req, res) => {
     try {
-        const stores = await Store.find().populate('owner')
+        const stores = await Store.find().populate('owner').populate('items.reviews.author')
         res.status(200).json(stores)
     } catch(err) {
         res.status(500).json(err)
@@ -18,7 +18,7 @@ router.get('/', async (req, res) => {
 // GET ONE STORE
 router.get('/:storeId', async (req, res) => {
     try {
-        const store = await Store.findById(req.params.storeId).populate('owner')
+        const store = await Store.findById(req.params.storeId).populate('owner').populate('items.reviews.author')
         res.status(200).json(store)
     } catch (err) {
         res.status(500).json(err)
